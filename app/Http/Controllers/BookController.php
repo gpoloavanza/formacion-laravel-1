@@ -7,23 +7,18 @@ use App\Models\Book;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Http\Requests\IndexBookRequest;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(IndexBookRequest $request)
     {
-        $sort = $request->query('sort', 'title');
+        $sort = $request->validated('sort', 'title');
         $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
         $column = ltrim($sort, '-');
-
-        $allowedSorts = ['title', 'created_at'];
-
-        if (!in_array($column, $allowedSorts, true)) {
-            $column = 'title';
-        }
 
         $books = Book::with(['author', 'genres'])
         ->orderBy($column, $direction)

@@ -27,6 +27,12 @@ class LoanController extends Controller
      */
     public function returnBook(ReturnBookRequest $request, Loan $loan)
     {
+        if (!is_null($loan->returned_at)) {
+            return response()->json([
+                'message' => 'Este préstamo ya ha sido devuelto.',
+            ], 409);
+        }
+
         $loan->returned_at = now();
         $loan->save();
         

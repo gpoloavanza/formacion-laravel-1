@@ -43,4 +43,13 @@ class LoanControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
     }
+
+    public function test_it_cannot_return_an_already_returned_book(): void
+    {
+        $loan = Loan::factory()->create(['returned_at' => now()]);
+
+        $response = $this->patchJson("/api/loans/{$loan->id}/return");
+
+        $response->assertStatus(409);
+    }
 }
